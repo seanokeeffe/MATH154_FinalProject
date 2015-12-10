@@ -13,8 +13,8 @@ baseball.teams <- c("ARI", "ATL", "BAL", "BOS", "CHC", "CHW", "CIN", "CLE", "COL
                     "PHI", "PIT", "SDP", "SFG", "SEA", "STL", "TBR", "TEX", "TOR", "WSN")
 stats.all.bat <- stats.all.pitch <- data.frame()
 # test
-#year <- 2010
-#team <- "CHW"
+year <- 2010
+team <- "CHW"
 
 for(year in 2010:2015) {
   # Update team codes if necessary-see Baseball Team Abbreviations.txt
@@ -88,6 +88,7 @@ for(year in 2010:2015) {
             filter(Lg %in% c("AL", "NL", "MLB")) %>%
             filter(Year %in% 2010:2015) %>% 
             mutate(player = player.name)
+          stats.current <- remove.dup(stats.current)
           
           # Add to existing hitter data set
           stats.all.bat <- rbind(stats.all.bat, stats.current)
@@ -116,6 +117,7 @@ for(year in 2010:2015) {
               filter(Lg %in% c("AL", "NL", "MLB")) %>%
               filter(Year %in% 2010:2015) %>% 
               mutate(player = player.name)
+            stats.current <- remove.dup(stats.current)
             
             # Add to existing pitcher data set
             stats.all.pitch <- rbind(stats.all.pitch, stats.current)
@@ -124,4 +126,11 @@ for(year in 2010:2015) {
       }
     }
   }
+}
+
+remove.dup <- function(stats) {
+  stats.simple <- stats[!(stats$Tm=="TOT"),]
+  stats.simple <- stats.simple[!duplicated(stats.simple$Year),]
+  
+  stats.simple
 }
