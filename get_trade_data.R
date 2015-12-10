@@ -4,8 +4,10 @@
 #
 # Final Project
 # Jozi McKiernan, Sean O'Keeffe, Sam Woodman
-#
+
+#-----------------------------------------------------------------------------------------------------
 # Data Collection - Getting trade data for MLB
+#-----------------------------------------------------------------------------------------------------
 
 # Required packages
 require(RCurl)
@@ -56,3 +58,6 @@ for (year in 2010:2015) {
     trades <- rbind(tempData, trades)
   }
 }
+
+# remove all the unecessary variables
+remove(tempData, end_date, endDay.ch, json, month, month.ch, numDaysInMonth, start_date, url, year, year.ch)
