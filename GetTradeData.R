@@ -18,8 +18,7 @@ numDaysInMonth <- c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 # The data frame we eventually fill with trades
 trades <- data.frame(NewTeam = '', OldTeam = '', Player = '', TradeDate = '', stringsAsFactors = FALSE)
 
-start_date <- ''
-end_date <- ''
+# Loop through very month for every year from 2010 to 2015
 for (year in 2010:2015) {
   for (month in 1:12) {
     
@@ -57,6 +56,3 @@ for (year in 2010:2015) {
     trades <- rbind(tempData, trades)
   }
 }
-
-
-
