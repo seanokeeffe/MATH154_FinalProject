@@ -44,6 +44,7 @@ for (year in 2010:2015) {
     # Jacascript file which provides the data in JSON format.
     url <- paste('http://mlb.mlb.com/lookup/json/named.transaction_all.bam?start_date=',start_date,'&end_date=',end_date,'&sport_code=%27mlb%27', sep='')
     json <- getURL(url)
+    Sys.sleep(0.2)
     tempData <- as.data.frame(fromJSON(json))
     
     # Filter all the things we don't want. We are only concerned with trades,
