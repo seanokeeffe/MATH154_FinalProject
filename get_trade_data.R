@@ -18,7 +18,7 @@ require(dplyr)
 numDaysInMonth <- c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
 # The data frame we eventually fill with trades
-trades <- data.frame(NewTeam = '', OldTeam = '', Player = '', Year = '', stringsAsFactors = FALSE)
+trades <- data.frame(NewTeam = '', OldTeam = '', Player = '', Year = '', MatchKey = '', stringsAsFactors = FALSE)
 
 # Loop through very month for every year from 2010 to 2015
 for (year in 2010:2015) {
@@ -53,10 +53,11 @@ for (year in 2010:2015) {
       filter(transaction_all.queryResults.row.type_cd=='TR') %>%
       select(transaction_all.queryResults.row.team, transaction_all.queryResults.row.from_team, transaction_all.queryResults.row.player) %>%
       filter(transaction_all.queryResults.row.player != '') %>%
-      mutate(Year = year)
+      mutate(Year = year) %>%
+      mutate(MatchKey = paste(transaction_all.queryResults.row.player, Year))
     
     # Set the column names to mach 'trades' and then append the data
-    colnames(tempData) <- c('NewTeam', 'OldTeam', 'Player', 'Year')
+    colnames(tempData) <- c('NewTeam', 'OldTeam', 'Player', 'Year', 'MatchKey')
     trades <- rbind(tempData, trades)
   }
 }
