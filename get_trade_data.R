@@ -62,5 +62,11 @@ for (year in 2010:2015) {
   }
 }
 
+# Occasionally we get information on minor leagues so we remove those
+load("teams.RData")
+trades <- trades %>% 
+  filter(NewTeam %in% teams$Team.Names) %>%
+  filter(OldTeam %in% teams$Team.Names)
+
 # remove all the unecessary variables
-remove(tempData, end_date, endDay.ch, json, month, month.ch, numDaysInMonth, start_date, url, year, year.ch)
+remove(tempData, end_date, endDay.ch, json, month, month.ch, numDaysInMonth, start_date, url, year, year.ch, teams)
