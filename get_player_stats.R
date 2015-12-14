@@ -2,13 +2,14 @@
 
 get.player.urls <- function(players) {
   name.first <- tolower(players[1])
-  name.last <- tolower(players[2])
+  name.last <- gsub(" ", "", tolower(players[2])) # Handle multiple last names
   name.full <- paste(substr(name.last, 1, 5), substr(name.first, 1, 2), sep = "")
   
   paste(url.base.1, substr(name.full, 1, 1), "/", name.full, url.base.2, sep = "")
 }
 
-get.webpage <- function(player.url, player.name, years) {
+get.webpage.data <- function(player.url, player.name, years) {
+  idx <- 1
   while(TRUE) {
     player.web <- getURL(player.url)
     # Check player has right name
@@ -23,14 +24,14 @@ get.webpage <- function(player.url, player.name, years) {
     if(count >= 25 & name.correct) break
     
     # Else increment url index
-    x <- substr(player.url, 52, 53)
-    y <- as.numeric(x)+1
-    y <- ifelse(y < 10, paste("0", y, sep=""), toString(y))
-    if(y > 10) {
+    idx <- idx + 1
+    if(idx >= 10) {
       cat("Index of player url is greater than 10", "\n")
       player.web <- ""
       break
     }
+    x <- paste("0", idx-1, sep = "")
+    y <- paste("0", idx, sep = "")
     player.url <- gsub(toString(x), toString(y), player.url)
   }
   player.web
@@ -48,7 +49,7 @@ get.player.stats <- function(urls.all, players.pos, years) {
     player.url <- urls.all[i]
     
     ## Get right player
-    player.web <- get.webpage(player.url, player.name, years)
+    player.web <- get.webpage.data(player.url, player.name, years)
     if(player.web != "") {
       parsedDoc <- readHTMLTable(player.web, stringsAsFactors=FALSE)
       
@@ -67,7 +68,7 @@ get.player.stats <- function(urls.all, players.pos, years) {
           filter(Lg %in% c("AL", "NL", "MLB")) %>%
           filter(Year %in% years) %>% 
           mutate(player = player.name)
-        stats.current <- stats.current[!(stats.current$Tm=="TOT"),]
+        stats.current <- stats.current[!(stats.current$Tm == "TOT"),]
         stats.current <- stats.current[!duplicated(stats.current$Year),]
         
         # Add to existing data set
@@ -78,7 +79,8 @@ get.player.stats <- function(urls.all, players.pos, years) {
   players.stats
 }
 
-load("~/Google Drive/Semester 7/MATH154-Comp Stats/MATH154_FinalProject_Git/player_names_2010.RData")
+# Player name data
+load("~/Google Drive/Semester 7/MATH154-Comp Stats/MATH154_FinalProject_Git/Data/player_names_2010.RData")
 
 players.pitchers <- filter(players.all, pos == "P")
 players.hitters <- filter(players.all, pos != "P")
@@ -88,5 +90,5 @@ url.base.2 <- "01.shtml"
 players.pitchers.urls <- apply(players.pitchers, 1, get.player.urls)
 players.hitters.urls <- apply(players.hitters, 1, get.player.urls)
 
-players.stats.pitcher <- get.player.stats(players.pitchers.urls, players.pitchers, 2010:2015)
+players.stats.pitcher <- get.player.stats(players.pitchers.urls[120:140], players.pitchers[120:140,], 2010:2015)
 players.stats.hitter <- get.player.stats(players.hitters.urls, players.hitters, 2010:2015)
