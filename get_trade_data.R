@@ -46,7 +46,7 @@ for (year in 2010:2015) {
     end_date <- paste(year.ch, month.ch, endDay.ch, sep='')
     
     # This website loads the table data using Javascript. We go directly to the 
-    # Jacascript file which provides the data in JSON format.
+    # JSON file which provides the data.
     url <- paste('http://mlb.mlb.com/lookup/json/named.transaction_all.bam?start_date=',start_date,'&end_date=',end_date,'&sport_code=%27mlb%27', sep='')
     json <- getURL(url)
     Sys.sleep(0.2)

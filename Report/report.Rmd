@@ -1,0 +1,99 @@
+---
+title: "Something Interesting Baseball"
+author: "Jozi McKiernan, Sean O'Keeffe & Sam Woodman"
+output: pdf_document
+bibliography: report.bib
+nocite: |
+  @ggplot2, @shiny, @dplyr, @RCurl, @jsonlite, @shinydashboard, @RgoogleMaps, @xml, @tidyr, @mosaic, @stringr, @R
+---
+
+[//]: # Introduction Section-------------------------------------------------
+# Introduction
+
+[//]: # Data Collection Section----------------------------------------------
+# Data Collection
+The data collection for this project was the most involved component.
+We were able to find comprehensive statistics for any given player from @stats, however each page was for one player.
+So we had to go find a list of all players for a given year.
+We found this from @players.
+Now that we had all the predicting attributes, we still needed to know if a player was traded.
+All transactions for a given a month for a given year was found through @trades.
+However, there are instances of teams changing names and some entries from @trades, include minor league teams so we also needed a list of all the major league baseball teams and their naming history.
+In this section, we will discuss some of the subtleties that made this a difficult process.
+
+To keep our project organized, we split up the data collection into their own files. So we run all the data collection here and we will have code bits to describe some of the steps. Refer to the `final_project.R` file and all the other supplemental files.
+```{r, message=FALSE}
+setwd("~/Documents/GitHub/MATH154_FinalProject")
+source("get_team_data.R", local = TRUE, echo = FALSE)
+#source("final_project.R", local=TRUE, echo=FALSE)
+```
+
+## List of all players
+
+## Player statistics
+
+## Teams
+The list of team names were acquired manually, there are only 30 teams so it was very manageable.
+We also got data on the location of every team.
+Although a location is given in the team name, situations like the *Florida Marlins* is not an easy thing to locate on a map.
+These locations were also acquired manually.
+Team colors were also recorded manually.
+Lastly, we also wanted latitude and longitude locations for each team.
+This data came from google maps, using a package in R called `Rgooglemaps` @RgoogleMaps.
+
+The data looks like
+```{r}
+head(teams, n = 3)
+```
+
+## Trades
+The trade data was a unique problem that we hadn't seen before.
+When you try to scrape the HTML code for this website as we have done previously, no tables appear.
+It turns out that the tables are generated on the client side through Java script so scraping the initial request doesn't give you anything. 
+However the data itself had to be sent at some point, so after digging through some of the other files transfered, we found a JSON file that seemed to contain all the data we wanted.
+So we query the URL for this file rather than the website.
+```{r, eval=FALSE}
+# This website loads the table data using Javascript. We go directly to the 
+# JSON file which provides the data.
+url <- paste('http://mlb.mlb.com/lookup/json/named.transaction_all.bam?start_date=',
+             start_date,
+             '&end_date=',
+             end_date,
+             '&sport_code=%27mlb%27',
+             sep='')
+json <- getURL(url)
+tempData <- as.data.frame(fromJSON(json))
+```
+From here we trim down the data so that we only keep the data we're interested in.
+```{r, eval=FALSE}
+# Filter all the things we don't want. 
+tempData <- tempData %>%
+  # Only want trades
+  filter(transaction_all.queryResults.row.type_cd=='TR') %>% 
+  # Only want certain columns
+  select(transaction_all.queryResults.row.team, 
+         transaction_all.queryResults.row.from_team, 
+         transaction_all.queryResults.row.player) %>% 
+  # Remove any empty rows
+  filter(transaction_all.queryResults.row.player != '') %>% 
+  # Add a year attribute
+  mutate(Year = year) %>% 
+  # Add a key to match with stats data
+  mutate(MatchKey = paste(transaction_all.queryResults.row.player, Year)) 
+```
+
+We do these steps for all 12 months during 2010 to 2015.
+This ultimately gives us a table that is shown below, see .
+```{r}
+head(trades, n = 3)
+```
+
+[//]: # Classification Section-----------------------------------------------
+# Classification
+
+[//]: # Shiny Web App Section------------------------------------------------
+# Shiny Web App
+
+
+
+\newpage
