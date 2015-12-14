@@ -44,3 +44,5 @@ vignettes/*.pdf
 *.synctex.gz
 *.toc
 *.ttt
+*.fdb_latexmk
+*.fls
