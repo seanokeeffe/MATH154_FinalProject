@@ -30,7 +30,7 @@ get.player.names <- function(years.all = 2010:2015) {
       players.to.add <- data.frame(first.name = temp[1,], last.name = temp[2,], 
                                    pos = data.table$Position, stringsAsFactors = FALSE)
       
-      players.all <- rbind(players.all, players.to.add)
+      players.all <- unique(rbind(players.all, players.to.add))
       num <- num + 1
     }
   }
