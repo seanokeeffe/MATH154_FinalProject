@@ -12,6 +12,7 @@
 # load required packages
 require(shiny)
 require(dplyr)
+require(ggmap)
 
 # load in data on trades and teams
 load("Data/trades.RData")
@@ -44,8 +45,10 @@ server <- function(input, output) {
       temp_color <- as.character(temp$color[1])
       tradeMap <- tradeMap + geom_segment(aes(x=lon_o, y=lat_o, xend=lon_n, yend=lat_n), data=temp, color=temp_color)
     }
+    remove(temp, temp_color, team)
     tradeMap
   }})
+  #-------------------------------------------------------------------------------------
   
   # Output for mapping the trades
   output$map <- renderPlot({

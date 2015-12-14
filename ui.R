@@ -64,7 +64,7 @@ ui <- dashboardPage(
         
         fluidRow(
           box(
-            title = "Map", status = "primary", solidHeader = TRUE,  width = 12, height=800, collapsible = TRUE,
+            title = "Map", status = "primary", solidHeader = FALSE,  width = 12, height=800, collapsible = TRUE,
             plotOutput("map", height=600)
           )
         ),
