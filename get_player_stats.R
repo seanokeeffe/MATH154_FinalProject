@@ -80,15 +80,15 @@ get.player.stats <- function(urls.all, players.pos, years) {
 }
 
 # Player name data
-load("~/Google Drive/Semester 7/MATH154-Comp Stats/MATH154_FinalProject_Git/Data/player_names_2010.RData")
+#load("~/Google Drive/Semester 7/MATH154-Comp Stats/MATH154_FinalProject_Git/Data/player_names_2010.RData")
 
-players.pitchers <- filter(players.all, pos == "P")
-players.hitters <- filter(players.all, pos != "P")
+players.pitchers <- filter(players.all.names, pos == "P")
+players.hitters <- filter(players.all.names, pos != "P")
 url.base.1 <- "http://www.baseball-reference.com/players/"
 url.base.2 <- "01.shtml"
 
 players.pitchers.urls <- apply(players.pitchers, 1, get.player.urls)
 players.hitters.urls <- apply(players.hitters, 1, get.player.urls)
 
-players.stats.pitcher <- get.player.stats(players.pitchers.urls[120:140], players.pitchers[120:140,], 2010:2015)
+players.stats.pitcher <- get.player.stats(players.pitchers.urls, players.pitchers, 2010:2015)
 players.stats.hitter <- get.player.stats(players.hitters.urls, players.hitters, 2010:2015)

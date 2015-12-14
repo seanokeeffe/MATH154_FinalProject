@@ -19,7 +19,7 @@ get.player.names <- function(years.all = 2010:2015) {
     cat("Year", year, "\n")
     num <- 1
     while(TRUE) {
-      cat("Num", num, "\n")
+      cat("Year", year,"; Num", num, "\n")
       url.string <- paste("http://www.foxsports.com/mlb/players?season=", year, "&page=", num, "&position=0", sep = "")
       web <- getURL(url.string)
       parsedDoc <- readHTMLTable(web, stringsAsFactors=FALSE)
