@@ -11,3 +11,36 @@
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
+
+# Ignore .DS_Store files from Mac OS X.
+.DS_Store
+
+# Ignore PDFs
+*.pdf
+
+# Ignore TeX auxiliary files.
+*.aux
+*.bbl
+*.blg
+*.brf
+*.bux
+*.dvi
+*.fff
+*.glo
+*.idx
+*.ilg
+*.ind
+*.lof
+*.log
+*.lot
+*.nav
+*.out
+*.pdfsync
+*.pre
+*.ps
+*.rel
+*.rip
+*.snm
+*.synctex.gz
+*.toc
+*.ttt
