@@ -63,7 +63,7 @@ for (year in 2010:2015) {
 }
 
 # Occasionally we get information on minor leagues so we remove those
-load("teams.RData")
+load("Data/teams.RData")
 trades <- trades %>% 
   filter(NewTeam %in% teams$Team.Names) %>%
   filter(OldTeam %in% teams$Team.Names)

@@ -13,7 +13,7 @@
 require(shinydashboard)
 
 # Get data on the teams
-load("teams.RData")
+load("Data/teams.RData")
 teams <- as.vector(teams$Team.Names)
 
 # Setting up the shiny app
@@ -58,7 +58,7 @@ ui <- dashboardPage(
         fluidRow(
           box(
             title = "Select teams:", status = "primary", solidHeader = TRUE,  width = 12, collapsible = TRUE,
-            selectInput("team", "Select a team:", choices = teams, multiple = TRUE, selected = "San Diego Padres")
+            selectInput("team", "Select a team:", choices = teams, multiple = TRUE, selected = "Los Angeles Dodgers")
           )
         ),
         
