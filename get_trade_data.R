@@ -14,6 +14,11 @@ require(RCurl)
 require(jsonlite)
 require(dplyr)
 
+# We require a 'teams' variable that can be acquired with the 'get_team_data.R' file
+if (!exists('teams')) {
+  stop("teams data is required to collect trade data")
+}
+
 # Used later to get the number of days in a month
 numDaysInMonth <- c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
@@ -63,10 +68,9 @@ for (year in 2010:2015) {
 }
 
 # Occasionally we get information on minor leagues so we remove those
-load("Data/teams.RData")
 trades <- trades %>% 
   filter(NewTeam %in% teams$Team.Names) %>%
   filter(OldTeam %in% teams$Team.Names)
 
 # remove all the unecessary variables
-remove(tempData, end_date, endDay.ch, json, month, month.ch, numDaysInMonth, start_date, url, year, year.ch, teams)
+remove(tempData, end_date, endDay.ch, json, month, month.ch, numDaysInMonth, start_date, url, year, year.ch)

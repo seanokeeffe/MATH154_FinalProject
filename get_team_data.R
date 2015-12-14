@@ -13,7 +13,7 @@
 require(RgoogleMaps)
 
 # Team names, team location, and team color were manually collected and saved in a csv file
-teams <- read.csv("teams.csv")
+teams <- read.csv("Data/teams.csv")
 
 # We add the lat lon location using Google Maps
 for (i in 1:nrow(teams)) {
