@@ -70,7 +70,7 @@ players.hitters.stats <- players.hitters.stats %>%
 players.pitchers.stats <- players.pitchers.stats %>% 
   mutate(`SHO/G` = SHO/G) %>% 
   mutate(`SV/G` = SV/G) %>% 
-  select(player, Year, Age, `W-L%`, ERA, `SHO/G`, `SV/G`, FIP, WHIP, `H9`, `HR9`, `BB9`, `SO9`)
+  select(player, Year, Age, `W-L%`, ERA, `SHO/G`, `SV/G`, FIP, WHIP, `HR9`, `SO9`)
 
 # Apply logistic regression
 source('logistic_regression.R')

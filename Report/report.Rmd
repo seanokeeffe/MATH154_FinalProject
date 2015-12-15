@@ -121,10 +121,10 @@ head(trades, n = 3)
 
 [//]: # Classification Section-----------------------------------------------
 # Classification
-We used logisic regression to predict whether or not a player would get traded or not.
-We chose logistic regression because the output is like a probability of being traded and so we could have an idea of how confident we can be of the prediction.
+We used logisic regression to predict whether or not a player would get traded.
+We chose logistic regression because the output is similar to a probability of being traded and thus we could have an idea of how confident we can be of the prediction.
 
-We first create the response variable by cross referencing the trade data with the statistics.
+We first created the response variable by cross referencing the trade data with the statistics.
 ```{r}
 #-------------------------BATTERS-------------------------
 
@@ -142,7 +142,8 @@ players.hitters.stats = na.omit(players.hitters.stats)
 players.hitters.stats = select(players.hitters.stats, Age, BA, OBP, `R/PA`, `RBI/PA`,
                                `2B/PA`, `3B/PA`, `HR/PA`, `SB/PA`, `SO/PA`, traded)
 ```
-We repeat this same process for the pitching data
+
+We then repeated this same process for the pitching data.
 ```{r}
 #--------------------------PITCHERS--------------------------
 
@@ -162,8 +163,11 @@ players.pitchers.stats = select(players.pitchers.stats, Age, `W-L%`, ERA, FIP, W
                                 HR9, BB9, SO9, traded, `SHO/G`, `SV/G`)
 ```
 
-Then we can build the classifier on this data. 
-In R we can use the function `glm` and specify the family to binomial to do logistic regression.
+The last step in both of those chunks of code, removing predictors that don't make sense from a baseball standpoint, was something that we spent a lot of time thinking about. @stats provided us with around 30 varibales for each player, but many of those variables either captured similar information. For instance, number of hits and walks for a hitter contains similar information to on-base percentage (OBP), while hits allowed and hits per nine innings for a pitcher contains similar information.
+When evaluating the variables, we also considered whether or not it made since with the way data was collected. We decided to remove stats such as games started, finished, and total for pitchers and games, at-bats, and plate appearences for hitters because the way we collected the data, if a player was traded during the middle of the year, we only kept their stats from their first team for that year. We did this because these stats from the first team inspired someone to trade for that player, but this process also artificially skewed the total variable statistics such as home runs, plate appearances, and wins for players. Thus, we tried to only keep variables that were percentages, such as win-loss percentage, or were normalized by at-bats, plate appearances, or games such as batting average and ERA. We also created new, normalized statistics such as saves per game, doubles per plate appearance, and strikeouts per plate appearance.
+
+Finally, we built a logistic regression classifier on this data. 
+We used the function `glm` and specified the family to binomial to do logistic regression.
 
 ```{r}
 #logistic regression for batters
@@ -173,7 +177,7 @@ glm.fit.bat = glm(traded~., data = players.hitters.stats, family=binomial)
 glm.fit.pitch = glm(traded~., data = players.pitchers.stats, family=binomial)
 ```
 
-Once we have these fits, we need to come up with a cutoff for which data points are considered a 1 and which ones are 0s.
+Once we had these fits, we needed to come up with a cutoff for which data points are considered a 1 and which ones are 0s.
 To do this, we used 10-fold cross validation!
 ```{r, cache.vars=TRUE}
 # Cross validation function
@@ -220,7 +224,7 @@ The cutoff that gives us the lowest average error is anything at or above 0.92.
 ```{r}
 crossValid(players.pitchers.stats)
 ```
-This cutoff actually resultd in a prediction of 0 every single time, this effectively tells us that these variables don't tell us much but how likely it is for a pitcher to be traded.
+This cutoff actually resulted in a prediction of 0 every single time, which effectively told us that these variables don't tell us much about how likely it is for a pitcher to be traded.
 However, so that we can have a more interesting predictor, we'll use the next best cutoff.
 ```{r}
 x = cutoff_errors[1:91]
