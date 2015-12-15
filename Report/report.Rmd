@@ -15,7 +15,7 @@ require(dplyr)
 [//]: # Introduction Section-------------------------------------------------
 # Introduction
 Root, root, root for the home team - but what if the home team isn't who it used to be? Major League baseball players are traded every season by teams hunting for an edge. Imagine you could predict when your favorite players were going to change teams. Admit it - if you're a baseball fan, you've been puzzled by the logic of GMs as they barter prospects for big names and flip the roster upside down right before a deadline. 
-What factors play a role in who gets traded? Obviously, there are some player-external factors - how the team is doing, managerial tendencies, and the state of the player's contract, to name a few - but what about factors related to the player's performance? Surely those play a role as well. And conveniently, there are a whole heap of statistics collected on the performance of every player in the major leagues. So let's check it out - can we predict whether a player will get traded this season based on their current performance? 
+What factors play a role in who gets traded? Obviously, there are some player-external factors - how the team is doing, managerial tendencies, and the state of the player's contract, to name a few - but what about factors related to the player's performance? Surely those play a role as well. And conveniently, there are a whole heap of statistics collected on the performance of every player in the major leagues. Thus, we looked at if we can predict whether a player will get traded during or after a season given their performance that season.
 
 [//]: # Data Collection Section----------------------------------------------
 # Data Collection
