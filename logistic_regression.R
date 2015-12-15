@@ -67,7 +67,7 @@ players.hitters.stats = select(players.hitters.stats, Age, BA, OBP, `R/PA`, `RBI
 
 # Cross validation-------------------------------------------------------------------
 # Run one time to select cutoff parameter
-crossValid(players.hitters.stats)
+# crossValid(players.hitters.stats)
 
 #logistic regression for batters
 glm.fit.bat = glm(traded~., data=players.hitters.stats, family=binomial)
@@ -92,11 +92,11 @@ players.pitchers.stats = select(players.pitchers.stats, Age, `W-L%`, ERA, FIP, W
 
 # Cross validation-------------------------------------------------------------------
 # Run one time to select cutoff parameter
-crossValid(players.pitchers.stats)
+# crossValid(players.pitchers.stats)
 
 #logistic regression for pitchers
 glm.fit.pitch = glm(traded~., data =players.pitchers.stats, family=binomial)
 
 #print confusion matrix
-table(predict(glm.fit.pitch, type = "response")>.4, players.pitchers.stats$traded)
+table(predict(glm.fit.pitch, type = "response")>.5, players.pitchers.stats$traded)
 

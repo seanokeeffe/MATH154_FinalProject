@@ -231,7 +231,6 @@ Keeping track of the average error for various cutoffs, we found that around 0.4
 ```{r}
 cutoffs <- crossValid(players.hitters.stats)
 which(cutoffs == min(cutoffs))/100
-cutoffs[40]
 ```
 
 The pitchers however, gave us interesting results, for the cutoff that gives us the lowest average error is anything at or above 0.93.
@@ -245,7 +244,6 @@ Back to the pitcher cutoff value: in order to have a more interesting predictor,
 ```{r}
 x = cutoffs[1:92]
 which(x == min(x))/100
-cutoffs[50]
 ```
 
 Now that we had a model, we could look into what variables seemed to contribute more to determining wether or not a player gets traded.
