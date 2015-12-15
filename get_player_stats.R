@@ -72,7 +72,7 @@ get.player.stats <- function(urls.all, players.pos, years) {
         stats.current <- stats.current[!duplicated(stats.current$Year),]
         
         # Add to existing data set
-        players.stats <- rbind(players.stats, stats.current)
+        if(length(stats.current) == length(players.stats)) players.stats <- rbind(players.stats, stats.current)
       }
     }
   }
@@ -80,7 +80,7 @@ get.player.stats <- function(urls.all, players.pos, years) {
 }
 
 # Player name data
-#load("~/Google Drive/Semester 7/MATH154-Comp Stats/MATH154_FinalProject_Git/Data/player_names_2010.RData")
+#load("~/Google Drive/Semester 7/MATH154-Comp Stats/MATH154_FinalProject_Git/Data/player_names_2010-2015.RData")
 
 players.pitchers <- filter(players.all.names, pos == "P")
 players.hitters <- filter(players.all.names, pos != "P")
