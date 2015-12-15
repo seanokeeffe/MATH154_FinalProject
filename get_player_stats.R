@@ -54,7 +54,7 @@ get.webpage.data <- function(player.url, player.name, years) {
 get.player.stats <- function(urls.all, players.pos, years) {
   num.urls <- length(urls.all)
   if(num.urls != nrow(players.pos)) stop(message = "Number of urls does not equal number of players")
-  players.stats <- data.frame()
+  players.stats <- NULL
   for(i in 1:num.urls){
     player.name <- paste(players.pos$first.name[i], players.pos$last.name[i])
     cat(i, "out of", num.urls, ":", player.name, "\n")
@@ -85,7 +85,8 @@ get.player.stats <- function(urls.all, players.pos, years) {
         stats.current <- stats.current[!duplicated(stats.current$Year),]
         
         # Add to existing data set
-        if(length(stats.current) == length(players.stats)) players.stats <- rbind(players.stats, stats.current)
+        if(is.null(players.stats) | (length(stats.current) == length(players.stats))) 
+          players.stats <- rbind(players.stats, stats.current)
       }
     }
     Sys.sleep(0.2) 

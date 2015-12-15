@@ -50,5 +50,5 @@ players.pitchers.urls <- apply(players.pitchers, 1, get.player.urls)
 players.hitters.urls <- apply(players.hitters, 1, get.player.urls)
 
 # Get player stats
-players.stats.pitcher <- get.player.stats(players.pitchers.urls, players.pitchers, 2010:2015)
+players.stats.pitcher <- get.player.stats(players.pitchers.urls[1:500], players.pitchers[1:500,], 2010:2015)
 players.stats.hitter <- get.player.stats(players.hitters.urls, players.hitters, 2010:2015)
