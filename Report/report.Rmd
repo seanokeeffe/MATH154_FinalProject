@@ -11,15 +11,19 @@ nocite: |
 
 [//]: # Introduction Section-------------------------------------------------
 # Introduction
+Root, root, root for the home team - but what if the home team isn't who it used to be? Major League baseball players are traded every season by teams hunting for an edge. Imagine you could predict when your favorite players were going to change teams. Admit it - if you're a baseball fan, you've been puzzled by the logic of GMs as they barter prospects for big names and flip the roster upside down right before a deadline. 
+What factors play a role in who gets traded? Obviously, there are some player-external factors - how the team is doing, managerial tendencies, and the state of the player's contract, to name a few - but what about factors related to the player's performance? Surely those play a role as well. And conveniently, there are a whole heap of statistics collected on the performance of every player in the major leagues. So let's check it out - can we predict whether a player will get traded this season based on their current performance? 
 
 [//]: # Data Collection Section----------------------------------------------
 # Data Collection
+Unfortunately, the official MLB webpages and related fan pages were not created for data scientists. So step one is scraping the data from a number of pages and wrangling it into a usable format. To keep things reasonable, we decided to limit our search to records from the last five years only (2010-2015, inclusive). We found a list 
+First of all, we need to collect the 
 The data collection for this project was the most involved component.
 We were able to find comprehensive statistics for any given player from @stats, however each page was for one player.
 So we had to go find a list of all players for a given year.
 We found this from @players.
 Now that we had all the predicting attributes, we still needed to know if a player was traded.
-All transactions for a given a month for a given year was found through @trades.
+All transactions for a given month for a given year was found through @trades.
 However, there are instances of teams changing names and some entries from @trades, include minor league teams so we also needed a list of all the major league baseball teams and their naming history.
 In this section, we will discuss some of the subtleties that made this a difficult process.
 
@@ -92,6 +96,20 @@ head(trades, n = 3)
 
 [//]: # Classification Section-----------------------------------------------
 # Classification
+We used logistic regression to classify the data. 
+To generate our logistic regression model, we used the glm() function on our training data. 
+Then we used the model to predict whether or not players in the test data were traded. 
+
+According to the coefficients of our model for pitchers, the contributions of the predictors rank as follows:
+WHIP
+
+BB9, H9, HR9, Year, W-L%
+
+SHO, CG, L,R,  W,  GF, ERA, SV, ER, HBP, BK, SO9
+
+
+
+
 
 [//]: # Shiny Web App Section------------------------------------------------
 # Shiny Web App
@@ -104,7 +122,7 @@ So in this tab you are able to input all the statistics that were used to build 
 Then it will output a prediction of yes they will be traded or no they won't be.
 
 ## Trades Map
-This is a graphic that let's you visualize the trades.
+This is a graphic that lets you visualize the trades.
 As you can see in Figure~\ref{fig:trades_map}, you can select any number of teams you want and on the map will be all the trades that happened during 2010 to 2015 to that team.
 Below that is a data dump of those trades.
 This doesn't tell us anything particularly useful about the data, it was just a fun visualization.
