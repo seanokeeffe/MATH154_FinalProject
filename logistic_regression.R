@@ -67,7 +67,7 @@ players.hitters.stats = select(players.hitters.stats, Age, BA, OBP, `R/PA`, `RBI
 
 # Cross validation-------------------------------------------------------------------
 # Run one time to select cutoff parameter
-# crossValid(players.hitters.stats)
+crossValid(players.hitters.stats)
 
 #logistic regression for batters
 glm.fit.bat = glm(traded~., data=players.hitters.stats, family=binomial)
@@ -88,11 +88,11 @@ players.pitchers.stats = na.omit(players.pitchers.stats)
 
 
 # Remove categorical predictors and misleading/don't make sense from a baseball standpoint predictors
-players.pitchers.stats = select(players.pitchers.stats, Age, `W-L%`, ERA, FIP, WHIP, H9, HR9, BB9, SO9, traded, `SHO/G`, `SV/G`)
+players.pitchers.stats = select(players.pitchers.stats, Age, `W-L%`, ERA, FIP, WHIP, HR9, SO9, traded, `SHO/G`, `SV/G`)
 
 # Cross validation-------------------------------------------------------------------
 # Run one time to select cutoff parameter
-# crossValid(players.pitchers.stats)
+crossValid(players.pitchers.stats)
 
 #logistic regression for pitchers
 glm.fit.pitch = glm(traded~., data =players.pitchers.stats, family=binomial)

@@ -159,8 +159,8 @@ players.pitchers.stats = na.omit(players.pitchers.stats)
 
 # Remove categorical predictors and misleading/don't 
 # make sense from a baseball standpoint predictors
-players.pitchers.stats = select(players.pitchers.stats, Age, `W-L%`, ERA, FIP, WHIP, H9, 
-                                HR9, BB9, SO9, traded, `SHO/G`, `SV/G`)
+players.pitchers.stats = select(players.pitchers.stats, Age, `W-L%`, ERA, FIP, WHIP, 
+                                HR9, SO9, traded, `SHO/G`, `SV/G`)
 ```
 
 The last step in both of those chunks of code, removing predictors that don't make sense from a baseball standpoint, was something that we spent a lot of time thinking about. @stats provided us with around 30 varibales for each player, but many of those variables either captured similar information. For instance, number of hits and walks for a hitter contains similar information to on-base percentage (OBP), while hits allowed and hits per nine innings for a pitcher contains similar information.
@@ -212,25 +212,27 @@ crossValid <- function(d) {
     cutoff_errors = c(cutoff_errors, mean(errors))
   }
   
-  return(which(cutoff_errors == min(cutoff_errors))/100)
+  return(cutoff_errors)
 }
 ```
 Keeping track of the average error for various cutoffs, we found that around 0.4 gave us the best results for hitters.
 ```{r}
-crossValid(players.hitters.stats)
+cutoffs <- crossValid(players.hitters.stats)
+which(cutoffs == min(cutoffs))/100
 ```
 The pitchers however, gave us interesting results.
-The cutoff that gives us the lowest average error is anything at or above 0.92.
+The cutoff that gives us the lowest average error is anything at or above 0.93.
 ```{r}
-crossValid(players.pitchers.stats)
+cutoffs <- crossValid(players.pitchers.stats)
+which(cutoffs == min(cutoffs))/100
 ```
 This cutoff actually resulted in a prediction of 0 every single time, which effectively told us that these variables don't tell us much about how likely it is for a pitcher to be traded.
 However, so that we can have a more interesting predictor, we'll use the next best cutoff.
 ```{r}
-x = cutoff_errors[1:91]
+x = cutoffs[1:92]
 which(x == min(x))/100
 ```
-We find that this is also around 0.4.
+Given this we'll use 0.5 for the pitchers.
 
 Now that we have a model, we can look into what variables seem to contribute more to determining wether or not a player gets traded.
 ```{r}
@@ -239,7 +241,7 @@ glm.fit.bat
 glm.fit.pitch
 ```
 For the batters it seems like Triples per plate appearance had the largest coefficient in the regression, followed by batting average.
-For pitchers the most influential was WHIP, followed by hits per 9 innings.
+For pitchers the most influential was Shutouts per game, followed by W-L%.
 
 [//]: # Shiny Web App Section------------------------------------------------
 # Shiny Web App
