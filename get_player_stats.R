@@ -1,5 +1,5 @@
 
-
+# Takes a row of player name data and creates url string
 get.player.urls <- function(players) {
   name.first <- tolower(players[1])
   name.last <- gsub(" ", "", tolower(players[2])) # Handle multiple last names
@@ -8,6 +8,7 @@ get.player.urls <- function(players) {
   paste(url.base.1, substr(name.full, 1, 1), "/", name.full, url.base.2, sep = "")
 }
 
+# Get correct url for a single player
 get.webpage.data <- function(player.url, player.name, years) {
   idx <- 1
   while(TRUE) {
@@ -37,7 +38,7 @@ get.webpage.data <- function(player.url, player.name, years) {
   player.web
 }
 
-### Function: get.player.stats
+### Get statistics given vector of urls, data frame, and vector of years to get stats for
 get.player.stats <- function(urls.all, players.pos, years) {
   num.urls <- length(urls.all)
   if(num.urls != nrow(players.pos)) stop(message = "Number of urls does not equal number of players")
@@ -75,6 +76,7 @@ get.player.stats <- function(urls.all, players.pos, years) {
         if(length(stats.current) == length(players.stats)) players.stats <- rbind(players.stats, stats.current)
       }
     }
+    Sys.sleep(0.2) 
   }
   players.stats
 }
