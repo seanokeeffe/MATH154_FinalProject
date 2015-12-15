@@ -62,9 +62,9 @@ players.hitters.stats <- players.hitters.stats %>%
   mutate(`RBI/PA` = RBI/PA) %>% 
   mutate(`SB/PA` = SB/PA) %>% 
   mutate(`SO/PA` = SO/PA) %>% 
-  select(Year, Age, BA, OBP, `R/PA`, `2B/PA`, `3B/PA`, `HR/PA`, `RBI/PA`, `SB/PA`, `SO/PA`)
+  select(player, Year, Age, BA, OBP, `R/PA`, `2B/PA`, `3B/PA`, `HR/PA`, `RBI/PA`, `SB/PA`, `SO/PA`)
 # Filter pitcher stats for desired stats
 players.pitchers.stats <- players.pitchers.stats %>% 
   mutate(`SHO/G` = SHO/G) %>% 
   mutate(`SV/G` = SV/G) %>% 
-  select(Year, Age, `W-L%`, ERA, `SHO/G`, `SV/G`, FIP, WHIP, `H9`, `HR9`, `BB9`, `SO9`)
+  select(player, Year, Age, `W-L%`, ERA, `SHO/G`, `SV/G`, FIP, WHIP, `H9`, `HR9`, `BB9`, `SO9`)
