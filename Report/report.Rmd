@@ -2,6 +2,8 @@
 title: "Something Interesting Baseball"
 author: "Jozi McKiernan, Sean O'Keeffe & Sam Woodman"
 output: pdf_document
+header-includes:
+  - \usepackage{graphicx}
 bibliography: report.bib
 nocite: |
   @ggplot2, @shiny, @dplyr, @RCurl, @jsonlite, @shinydashboard, @RgoogleMaps, @xml, @tidyr, @mosaic, @stringr, @R
@@ -22,10 +24,9 @@ However, there are instances of teams changing names and some entries from @trad
 In this section, we will discuss some of the subtleties that made this a difficult process.
 
 To keep our project organized, we split up the data collection into their own files. So we run all the data collection here and we will have code bits to describe some of the steps. Refer to the `final_project.R` file and all the other supplemental files.
-```{r, message=FALSE}
+```{r, message=FALSE, eval=FALSE}
 setwd("~/Documents/GitHub/MATH154_FinalProject")
-source("get_team_data.R", local = TRUE, echo = FALSE)
-#source("final_project.R", local=TRUE, echo=FALSE)
+source("final_project.R", local=TRUE, echo=FALSE)
 ```
 
 ## List of all players
@@ -40,9 +41,10 @@ These locations were also acquired manually.
 Team colors were also recorded manually.
 Lastly, we also wanted latitude and longitude locations for each team.
 This data came from google maps, using a package in R called `Rgooglemaps` @RgoogleMaps.
+For each of the city locations, we look up the lat lon data with an API call to Google Maps.
 
 The data looks like
-```{r}
+```{r, eval=FALSE}
 head(teams, n = 3)
 ```
 
@@ -84,7 +86,7 @@ tempData <- tempData %>%
 
 We do these steps for all 12 months during 2010 to 2015.
 This ultimately gives us a table that is shown below, see .
-```{r}
+```{r, eval=FALSE}
 head(trades, n = 3)
 ```
 
@@ -93,7 +95,29 @@ head(trades, n = 3)
 
 [//]: # Shiny Web App Section------------------------------------------------
 # Shiny Web App
+The Shiny Web App has 3 tabs, Predict Trades, Trades Map, and Something.
+Each one of these tabs will be described below.
+
+## Predict Trades
+We built a classifier using statistics of the baseball players to try and predict wether or not a player would get traded.
+So in this tab you are able to input all the statistics that were used to build the classifier.
+Then it will output a prediction of yes they will be traded or no they won't be.
+
+## Trades Map
+This is a graphic that let's you visualize the trades.
+As you can see in Figure~\ref{fig:trades_map}, you can select any number of teams you want and on the map will be all the trades that happened during 2010 to 2015 to that team.
+Below that is a data dump of those trades.
+This doesn't tell us anything particularly useful about the data, it was just a fun visualization.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{trades_map.png}
+\label{fig:trades_map}
+\caption{Screenshot of Trades Map tab.}
+\end{figure}
 
 
+## Something
+Maybe one variable dependence..?
 
 \newpage

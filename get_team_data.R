@@ -11,7 +11,6 @@
 
 # Load required packages
 require(RgoogleMaps)
-require(RCurl)
 
 # Team names, team location, and team color were manually collected and saved in a csv file
 teams <- read.csv("Data/teams.csv")
