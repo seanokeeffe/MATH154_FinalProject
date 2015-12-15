@@ -254,6 +254,14 @@ We built a classifier using statistics of the baseball players to try and predic
 In this tab you can input statistics on any hitter or batter.
 Then the app will magically run that point through our classifier and predict wether or not that player would get traded given those statistics.
 
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{predict_tab.png}
+\label{fig:predict}
+\caption{Screenshot of the prediction tab.}
+\end{figure}
+
+
 ## Trades Map
 
 This graphic lets you visualize the trades.
@@ -274,5 +282,12 @@ This tab allows you to select one of the predictor variables for batters or pitc
 The output is a plot that shows for which values of the selected variable, the players in our data got traded.
 Using this, you can get a better understanding of which variables might be important and which ones are irrelevant.
 If there was a strong connection between any single variable and a players likelihood to be traded, it would be present in these graphs.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.6\textwidth]{single_var_tab.png}
+\label{fig:single_var}
+\caption{Screenshot of the single variable trend tab.}
+\end{figure}
 
 \newpage
