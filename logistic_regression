@@ -1,0 +1,66 @@
+# MATH154 - Computational Statistics
+# Pomona College
+# Professor Hardin
+#
+# Final Project
+# Jozi McKiernan, Sean O'Keeffe, Sam Woodman
+
+#-----------------------------------------------------------------------------------------------------
+# Data Collection - Getting trade data for MLB
+#-----------------------------------------------------------------------------------------------------
+
+# Required packages
+require(dplyr)
+
+
+# run get_trade_data and GetData to get trades, stats.all.bat, and stats.all.pitch data frames
+
+#-------------------------BATTERS-------------------------
+
+# wrangle/mutate batter data 
+stats.all.bat = mutate(stats.all.bat, player.year = paste(player, Year))
+stats.all.bat = mutate(stats.all.bat, traded = 0 + player.year %in% trades$MatchKey)
+# Create factor variable for whether or not a player was traded
+stats.all.bat$traded = as.factor(stats.all.bat$traded)
+stats.all.bat = na.omit(stats.all.bat)
+
+# Remove categorical variables 
+stats.all.bat = select(stats.all.bat, -Tm)
+stats.all.bat = select(stats.all.bat, -Lg)
+stats.all.bat = select(stats.all.bat, -Pos)
+stats.all.bat = select(stats.all.bat, -player)
+stats.all.bat = select(stats.all.bat, -Awards)
+stats.all.bat = select(stats.all.bat, -player.year)
+
+
+#logistic regression for batters
+
+glm.fit.bat = glm(traded~., data =stats.all.bat, family=binomial)
+
+#print confusion matrix
+table(predict(glm.fit.bat, type = "response")>.05, stats.all.bat2$traded)
+
+
+#--------------------------PITCHERS--------------------------
+
+#wrangle and mutate pitcher data
+stats.all.pitch = mutate(stats.all.pitch, player.year = paste(player, Year))
+stats.all.pitch = mutate(stats.all.pitch, traded = 0 + player.year %in% trades$MatchKey)
+
+# Create factor variable for whether or not a player was traded
+stats.all.pitch$traded = as.factor(stats.all.pitch$traded)
+stats.all.pitch = na.omit(stats.all.pitch)
+
+# Remove categorical variables 
+stats.all.pitch = select(stats.all.pitch, -Tm)
+stats.all.pitch = select(stats.all.pitch, -Lg)
+stats.all.pitch = select(stats.all.pitch, -player)
+stats.all.pitch = select(stats.all.pitch, -Awards)
+stats.all.pitch = select(stats.all.pitch, -player.year)
+
+#logistic regression for pitchers
+glm.fit.pitch = glm(traded~., data =stats.all.pitch, family=binomial)
+
+#print confusion matrix
+table(predict(glm.fit.pitch, type = "response")>.05, stats.all.pitch$traded)
+
