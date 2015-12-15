@@ -1,11 +1,17 @@
+# MATH154 - Computational Statistics
+# Pomona College
+# Professor Hardin
+#
+# Final Project
+# Jozi McKiernan, Sean O'Keeffe, Sam Woodman
 
-library(XML)
-library(dplyr)
-library(tidyr)
-library(mosaic)
-library(RCurl)
-library(stringr)
+#-----------------------------------------------------------------------------------------------------
+# Data Collection - Getting players in MLB
+#-----------------------------------------------------------------------------------------------------
 
+# Packages are loaded in final_project.R
+
+# Get first and last name from noisy string
 format.names <- function(vec) {
   name.first <- unlist(str_split(vec, "\r"))[1]
   name.last <- tail(unlist(str_split(vec, "\t")), n=1)
@@ -13,6 +19,7 @@ format.names <- function(vec) {
   c(name.first, name.last)
 }
 
+# Get the names of all of the players in the mlb for a certain series of years
 get.player.names <- function(years.all = 2010:2015) {
   players.all <- data.frame()
   for(year in years.all){

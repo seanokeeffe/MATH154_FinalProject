@@ -9,10 +9,7 @@
 # Data Collection - Getting trade data for MLB
 #-----------------------------------------------------------------------------------------------------
 
-# Required packages
-require(RCurl)
-require(jsonlite)
-require(dplyr)
+# Packages are loaded in final_project.R
 
 # We require a 'teams' variable that can be acquired with the 'get_team_data.R' file
 if (!exists('teams')) {
