@@ -18,7 +18,9 @@ What factors play a role in who gets traded? Obviously, there are some player-ex
 # Data Collection
 Unfortunately, the official MLB webpages and related fan pages were not created for data scientists. So step one was scraping the data from a number of pages and wrangling it into a usable format. To keep things reasonable, we decided to limit our search to records from the last six years only (2010-2015, inclusive). 
 We found that @stats had all of the information that we were looking for, such as individual statistics and yearly team rosters. Another appealing aspect of @stats was that the urls for the web pages were very consistent; the only differences in the urls were differences in years, team names, and player names. Thus, we could write a script that could scrape all the data that we needed without any actions by us, which was appealing and could allow future users to scrape data for years different than 2010-2015.
-Because of the setup of @stats, it made the most sense for us to get a list of all the players that played in the MLB from 2010-2015 and then get all of their statistics for that time period. In order to get this data frame of players, we looped over the years and the team names as shown below.
+
+## List of all players
+Because of the setup of @stats, it made the most sense for us to get a list of all the players that played in the MLB from 2010-2015 and then get all of their statistics for that time period. In order to get this data frame of players, we looped over the years and the team names as shown below. Refer to `get_player_names.R` for the full code.
 ```{r, message=FALSE, eval=FALSE}
 baseball.teams <- c("ARI", "ATL", "BAL", "BOS", "CHC", "CHW", "CIN", "CLE", "COL", "DET", 
                     "FLA", "HOU", "KCR", "LAA", "LAD", "MIL", "MIN", "NYM", "NYY", "OAK", 
@@ -38,35 +40,33 @@ for(year in 2010:2015) {
   }
 }
 ```
+
+## Player statistics
 Thus, we had a data frame of all the pitchers and hitters in the MLB from 2010-2015. As we can see, getting the data from the website was not the issue because the urls were consistent, and all we wanted was the names of the players. It was a bit more effort and data wrangling to get the statistics for each individual player.
-Although the urls were consistent for each player, they only used the first five letters of their last name and the first two letters of their first name. Unfortunately, @stats is a database for retired players, and multiple players both currently playing and retired have the same first five letters of their last name and the first two letters of their first name. We were able to work around this issue by checking if both the full name of the player and the years for which we wanted data were in the output from the getURL call. Although we were unable to get data for all the players because of some strange edge cases, we were able to get statistics for the majority of MLB players from 2010-2015.
+Although the urls were consistent for each player, they only used the first five letters of their last name and the first two letters of their first name. Unfortunately, @stats is a database for retired players, and multiple players both currently playing and retired have the same first five letters of their last name and the first two letters of their first name. We were able to work around this issue by checking if both the full name of the player and the years for which we wanted data were in the output from the getURL call. Although we were unable to get data for all the players because of some strange edge cases, we were able to get statistics for the majority of MLB players.
 
+Once we had the statistics, we still had to wrangle the data. @stats includes minor league stats if a player for instance had a minor league rehab assignment, so we had to make sure that we only kept major league data from 2010-2015. Also, if a player is traded in the middle of a year, they have a stat line for their stats with their first team, a line with their stats from their second team, and a line with their stats for the whole year (they have more lines if they were traded more than once). We decided to only keep the stats from the player's first team because these were the stats that they had when management decided to trade them. See the `get_player_stats.R` file for the data scraping or wrangling code.
 
-The data collection for this project was the most involved component.
-We were able to find comprehensive statistics for any given player from @stats, however each page was for one player.
-So we had to go find a list of all players for a given year.
-We found this from @players.
-Now that we had all the predicting attributes, we still needed to know if a player was traded.
-All transactions for a given month for a given year was found through @trades.
-However, there are instances of teams changing names and some entries from @trades, include minor league teams so we also needed a list of all the major league baseball teams and their naming history.
+## Trades
+Now that we had all the predicting attributes, the player statistics, we still needed to know if a player was traded.
+All transactions for a given month for a given year could be found through @trades.
+However, instances exist of teams changing names, while some entries from @trades include minor league teams, so we also needed a list of all the major league baseball teams and their naming history.
 In this section, we will discuss some of the subtleties that made this a difficult process.
 
-To keep our project organized, we split up the data collection into their own files. So we run all the data collection here and we will have code bits to describe some of the steps. Refer to the `final_project.R` file and all the other supplemental files.
+To keep our project organized, we split up the data collection into their own files. We run all the data collection here and we will have code bits to describe some of the steps. Refer to the `final_project.R` file and all the other supplemental files.
 ```{r, message=FALSE, eval=FALSE}
 setwd("~/Documents/GitHub/MATH154_FinalProject")
 source("final_project.R", local=TRUE, echo=FALSE)
 ```
 
-## List of all players
 
-## Player statistics
+
 
 ## Teams
 The list of team names were acquired manually, there are only 30 teams so it was very manageable.
 We also got data on the location of every team.
 Although a location is given in the team name, situations like the *Florida Marlins* is not an easy thing to locate on a map.
-These locations were also acquired manually.
-Team colors were also recorded manually.
+These locations were also acquired manually, and the team colors were also recorded manually.
 Lastly, we also wanted latitude and longitude locations for each team.
 This data came from google maps, using a package in R called `Rgooglemaps` from @RgoogleMaps.
 For each of the city locations, we look up the lat lon data with an API call to Google Maps.

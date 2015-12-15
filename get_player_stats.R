@@ -67,7 +67,7 @@ get.player.stats <- function(urls.all, players.pos, years) {
       parsedDoc <- readHTMLTable(player.web, stringsAsFactors=FALSE)
       
       ## Get stats
-      # Hitters
+      # Hitters or Pitchers
       if(player.pos != "P") stats.current <- parsedDoc$batting_standard
       if(player.pos == "P") stats.current <- parsedDoc$pitching_standard  
       if(!is.null(stats.current)) {
