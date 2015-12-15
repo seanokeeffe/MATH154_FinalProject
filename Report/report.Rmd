@@ -220,19 +220,19 @@ Keeping track of the average error for various cutoffs, we found that around 0.4
 cutoffs <- crossValid(players.hitters.stats)
 which(cutoffs == min(cutoffs))/100
 ```
-The pitchers however, gave us interesting results.
-The cutoff that gives us the lowest average error is anything at or above 0.93.
+
+The pitchers however, gave us interesting results, for the cutoff that gives us the lowest average error is anything at or above 0.93.
 ```{r}
 cutoffs <- crossValid(players.pitchers.stats)
 which(cutoffs == min(cutoffs))/100
 ```
-This cutoff actually resulted in a prediction of 0 every single time, which effectively told us that these variables don't tell us much about how likely it is for a pitcher to be traded.
-However, so that we can have a more interesting predictor, we'll use the next best cutoff.
+This cutoff actually resulted in a prediction of 0 every single time, which effectively told us that these variables don't tell us much about how likely it is for a pitcher to be traded. We thought that one reson for this could be that our data set of pitchers consisted of both starting pitchers and relief pitchers. Although all pitchers have the same statistics and are evaluated by mostly similar statistics such as ERA, WHIP, and innings pitched, a stat such as innings pitched is very different for starters and relievers. Starters can pitch upwards of 200 innings while relievers usually max out around 80 innings pitched, which meant that although this stat is important in terms of evaluating a pitcher's performance, we removed it from our model because it was different for starters and relievers. Also, even though we included saves per game and shutouts per game, all starters had zero saves per game and all relievers had zero shutout per game, which made it so that those variables were not very useful.
+
+Back to the pitcher cutoff value: in order to have a more interesting predictor, we decided to use the next best cutoff, which was around 0.5
 ```{r}
 x = cutoffs[1:92]
 which(x == min(x))/100
 ```
-Given this we'll use 0.5 for the pitchers.
 
 Now that we have a model, we can look into what variables seem to contribute more to determining wether or not a player gets traded.
 ```{r}
@@ -240,13 +240,13 @@ glm.fit.bat
 
 glm.fit.pitch
 ```
-For the batters it seems like Triples per plate appearance had the largest coefficient in the regression, followed by batting average.
-For pitchers the most influential was Shutouts per game, followed by W-L%.
+For the hitters it seems like Triples per plate appearance had the largest coefficient in the regression, followed by batting average.
+For pitchers the most influential was WHIP, followed by hits per 9 innings.
+We were very surprised that triples per plate appearance had the largest coefficient in the regression, for triples are not a big part of baseball because they happen relatively infrequently. Also, most of the players that get triples are faster players, which suggests potentially that faster players were traded more than sluggers during this time period. Batting average is a much more traditional and widely applicable statistic, and thus we were not surprised it was important in predicting whether someone would be traded. It was kind of interesting how batting average had a larger coefficient than OBP, for many 'new-shcool' analysts weight OBP more heavily than the standard batting average, but these results could suggest that general managers still consider batting average more than OBP. Our regression model does not guarantee this whatsoever, but it was an interesting thought.
 
 [//]: # Shiny Web App Section------------------------------------------------
 # Shiny Web App
-The Shiny Web App has 3 tabs, Predict Trades, Trades Map, and a Single Variable Trend.
-Each one of these tabs will be described below.
+The Shiny Web App has 3 tabs, Predict Trades, Trades Map, and a Single Variable Trend, each of which is described below.
 
 ## Predict Trades
 We built a classifier using statistics of the baseball players to try and predict wether or not a player would get traded.
