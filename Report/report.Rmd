@@ -20,10 +20,10 @@ What factors play a role in who gets traded? Obviously, there are some player-ex
 [//]: # Data Collection Section----------------------------------------------
 # Data Collection
 Unfortunately, the official MLB webpages and related fan pages were not created for data scientists. So step one was scraping the data from a number of pages and wrangling it into a usable format. To keep things reasonable, we decided to limit our search to records from the last six years only (2010-2015, inclusive). 
-We found that @stats had all of the information that we were looking for, such as individual statistics and yearly team rosters. Another appealing aspect of @stats was that the urls for the web pages were very consistent; the only differences in the urls were differences in years, team names, and player names. Thus, we could write a script that could scrape all the data that we needed without any actions by us, which was appealing and could allow future users to scrape data for years different than 2010-2015.
+We found that @stats had all of the information that we were looking for, including individual statistics and yearly team rosters. Another appealing aspect of @stats was that the urls for the web pages were very consistent; the only differences in the urls were differences in years, team names, and player names. Thus, we could write a script that could scrape all the data that we needed without any actions by us, which was appealing and the only realistic way to do this project.
 
 We won't actually run the code to colelct the data here, because it will takes a lot of time.
-We have all the data saved, so we'll just load them in here.
+However, we have all the data saved, so we'll just load it here.
 Note that you should set the working directory to the location of this file, assuming no changes have been made to the file structure.
 ```{r, message=FALSE}
 load("../Data/teams.RData")
@@ -53,11 +53,23 @@ for(year in 2010:2015) {
 }
 ```
 
-## Player statistics
-Thus, we had a data frame of all the pitchers and hitters in the MLB from 2010-2015. As we can see, getting the data from the website was not the issue because the urls were consistent, and all we wanted was the names of the players. It was a bit more effort and data wrangling to get the statistics for each individual player.
-Although the urls were consistent for each player, they only used the first five letters of their last name and the first two letters of their first name. Unfortunately, @stats is a database for retired players, and multiple players both currently playing and retired have the same first five letters of their last name and the first two letters of their first name. We were able to work around this issue by checking if both the full name of the player and the years for which we wanted data were in the output from the getURL call. Although we were unable to get data for all the players because of some strange edge cases, we were able to get statistics for the majority of MLB players.
+We got the following data frame of players in `get_player_names.R`
+```{r}
+head(players.hitters, n = 5)
+```
 
-Once we had the statistics, we still had to wrangle the data. @stats includes minor league stats if a player for instance had a minor league rehab assignment, so we had to make sure that we only kept major league data from 2010-2015. Also, if a player is traded in the middle of a year, they have a stat line for their stats with their first team, a line with their stats from their second team, and a line with their stats for the whole year (they have more lines if they were traded more than once). We decided to only keep the stats from the player's first team because these were the stats that they had when management decided to trade them. See the `get_player_stats.R` file for the data scraping or wrangling code.
+## Player statistics
+Thus, we had a data frame of all the pitchers and hitters in the MLB from 2010-2015. 
+Although the urls for their statistics page were consistent for each player, the urls only used the first five letters of their last name and the first two letters of their first name. Unfortunately, @stats is a database for retired players, and multiple players both currently playing and retired have the same first five letters of their last name and the first two letters of their first name. We were able to work around this issue by checking if both the full name of the player and the years for which we wanted data were in the output from the getURL call. Although we were unable to get data for all the players because of some strange edge cases, we were able to get statistics for the majority of MLB players using the following urls.
+
+```{r}
+head(players.hitters.urls, n = 5)
+```
+
+Once we had the statistics, we still had to wrangle the data. @stats includes minor league stats if a player for instance had a minor league rehab assignment, so we had to make sure that we only kept major league data from 2010-2015. Also, if a player is traded in the middle of a year, they have a stat line for their stats with their first team, a line with their stats from their second team, and a line with their stats for the whole year (they have more lines if they were traded more than once). We decided to only keep the stats from the player's first team because these were the stats that they had when management decided to trade them. The code is fairly long, so see below for a few lines of the data frame and see the `get_player_stats.R` file itself for the data scraping or wrangling code.
+```{r}
+head(players.hitters.stats, n = 5)
+```
 
 ## Trades
 Now that we had all the predicting attributes, the player statistics, we still needed to know if a player was traded.
@@ -96,7 +108,7 @@ url <- paste('http://mlb.mlb.com/lookup/json/named.transaction_all.bam?start_dat
 json <- getURL(url)
 tempData <- as.data.frame(fromJSON(json))
 ```
-Next, we trim down the data so that we only keep the data we're interested in.
+Next, we simplified the data so that we only kept the data we were interested in.
 ```{r, eval=FALSE}
 # Filter all the things we don't want. 
 tempData <- tempData %>%
@@ -234,14 +246,14 @@ x = cutoffs[1:92]
 which(x == min(x))/100
 ```
 
-Now that we have a model, we can look into what variables seem to contribute more to determining wether or not a player gets traded.
+Now that we had a model, we could look into what variables seemed to contribute more to determining wether or not a player gets traded.
 ```{r}
 glm.fit.bat
 
 glm.fit.pitch
 ```
-For the hitters it seems like Triples per plate appearance had the largest coefficient in the regression, followed by batting average.
-For pitchers the most influential was shutouts per game, followed by win-loss percentage.
+For the hitters, Triples per plate appearance had the largest coefficient in the regression, followed by batting average.
+For pitchers the most influential variable was shutouts per game, followed by win-loss percentage.
 We were very surprised that triples per plate appearance had the largest coefficient in the regression, for triples are not a big part of baseball because they happen relatively infrequently. Also, most of the players that get triples are faster players, which suggests potentially that faster players were traded more than sluggers during this time period. Batting average is a much more traditional and widely applicable statistic, and thus we were not surprised it was important in predicting whether someone would be traded. It was kind of interesting how batting average had a larger coefficient than OBP, for many 'new-shcool' analysts weight OBP more heavily than the standard batting average, but these results could suggest that general managers still consider batting average more than OBP. Our regression model does not guarantee this whatsoever, but it was an interesting thought.
 We were also surprised that shutout per game had the largest cofficient for pitchers, because as discussed earlier, the data frame of pitcher statistics included both starting and relief pitchers and relief pitchers will always have zero shutouts.
 
