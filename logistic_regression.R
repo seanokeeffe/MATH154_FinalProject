@@ -34,14 +34,13 @@ stats.all.bat = na.omit(stats.all.bat)
 
 # Remove categorical predictors and misleading, repetitive, 
 # and/or don't make sense from a baseball standpoint predictors
-# stats.all.bat = select(stats.all.bat, Age, BA, OBP, `R/PA`, `RBI/PA`,`2B/PA`,`3B/PA`,`HR/PA`,`SB/PA`,`SO/PA`, traded)
-
+stats.all.bat = select(stats.all.bat, Age, BA, OBP, `R/PA`, `RBI/PA`,`2B/PA`,`3B/PA`,`HR/PA`,`SB/PA`,`SO/PA`, traded)
 
 #logistic regression for batters
 glm.fit.bat = glm(traded~., data =stats.all.bat, family=binomial)
 
 #print confusion matrix
-table(predict(glm.fit.bat, type = "response")>.05, stats.all.bat2$traded)
+table(predict(glm.fit.bat, type = "response")>.4, stats.all.bat$traded)
 
 
 #--------------------------PITCHERS--------------------------
@@ -58,12 +57,12 @@ stats.all.pitch = na.omit(stats.all.pitch)
 
 
 # Remove categorical predictors and misleading/don't make sense from a baseball standpoint predictors
-# stats.all.pitch = select(stats.all.pitch, Age, `W-L%`, ERA, FIP, WHIP, H9, HR9, BB9, SO9, traded, `SHO/G`, `SV/G`)
+stats.all.pitch = select(stats.all.pitch, Age, `W-L%`, ERA, FIP, WHIP, H9, HR9, BB9, SO9, traded, `SHO/G`, `SV/G`)
 
 
 #logistic regression for pitchers
 glm.fit.pitch = glm(traded~., data =stats.all.pitch, family=binomial)
 
 #print confusion matrix
-table(predict(glm.fit.pitch, type = "response")>.05, stats.all.pitch$traded)
+table(predict(glm.fit.pitch, type = "response")>.4, stats.all.pitch$traded)
 
