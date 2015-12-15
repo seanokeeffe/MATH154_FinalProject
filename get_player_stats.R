@@ -14,7 +14,7 @@
 # Takes a row of player name data and creates url string
 get.player.urls <- function(players) {
   name.first <- tolower(players[1])
-  name.last <- gsub(" ", "", tolower(players[2])) # Handle multiple last names
+  name.last <- tolower(players[2])
   name.full <- paste(substr(name.last, 1, 5), substr(name.first, 1, 2), sep = "")
   
   paste(url.base.1, substr(name.full, 1, 1), "/", name.full, url.base.2, sep = "")
@@ -38,8 +38,8 @@ get.webpage.data <- function(player.url, player.name, years) {
     
     # Else increment url index
     idx <- idx + 1
-    if(idx >= 5) {
-      cat("Index of player url is greater than 5", "\n")
+    if(idx >= 7) {
+      cat("Index of player url is greater than 7", "\n")
       player.web <- ""
       break
     }
@@ -56,7 +56,7 @@ get.player.stats <- function(urls.all, players.pos, years) {
   if(num.urls != nrow(players.pos)) stop(message = "Number of urls does not equal number of players")
   players.stats <- NULL
   for(i in 1:num.urls){
-    player.name <- paste(players.pos$first.name[i], players.pos$last.name[i])
+    player.name <- paste(players.pos$name.first[i], players.pos$name.last[i])
     cat(i, "out of", num.urls, ":", player.name, "\n")
     player.pos <- players.pos$pos[i]
     player.url <- urls.all[i]
