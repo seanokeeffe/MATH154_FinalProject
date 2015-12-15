@@ -16,8 +16,31 @@ What factors play a role in who gets traded? Obviously, there are some player-ex
 
 [//]: # Data Collection Section----------------------------------------------
 # Data Collection
-Unfortunately, the official MLB webpages and related fan pages were not created for data scientists. So step one is scraping the data from a number of pages and wrangling it into a usable format. To keep things reasonable, we decided to limit our search to records from the last five years only (2010-2015, inclusive). We found a list 
-First of all, we need to collect the 
+Unfortunately, the official MLB webpages and related fan pages were not created for data scientists. So step one was scraping the data from a number of pages and wrangling it into a usable format. To keep things reasonable, we decided to limit our search to records from the last six years only (2010-2015, inclusive). 
+We found that @stats had all of the information that we were looking for, such as individual statistics and yearly team rosters. Another appealing aspect of @stats was that the urls for the web pages were very consistent; the only differences in the urls were differences in years, team names, and player names. Thus, we could write a script that could scrape all the data that we needed without any actions by us, which was appealing and could allow future users to scrape data for years different than 2010-2015.
+Because of the setup of @stats, it made the most sense for us to get a list of all the players that played in the MLB from 2010-2015 and then get all of their statistics for that time period. In order to get this data frame of players, we looped over the years and the team names as shown below.
+```{r, message=FALSE, eval=FALSE}
+baseball.teams <- c("ARI", "ATL", "BAL", "BOS", "CHC", "CHW", "CIN", "CLE", "COL", "DET", 
+                    "FLA", "HOU", "KCR", "LAA", "LAD", "MIL", "MIN", "NYM", "NYY", "OAK", 
+                    "PHI", "PIT", "SDP", "SFG", "SEA", "STL", "TBR", "TEX", "TOR", "WSN")
+players.hitters <- players.pitchers <- data.frame()
+for(year in 2010:2015) {
+  # Update team codes when necessary
+  if(year == 2012) baseball.teams[11] <- "MIA"
+  for(team in baseball.teams) {
+    cat("year:", year, "; team:", team, "\n")
+    # Get team roster
+    url.string <- paste("http://www.baseball-reference.com/teams/", team, "/", year, ".shtml", sep = "")
+    web.team <- getURL(url.string)
+    parsedDoc.team <- readHTMLTable(web.team, stringsAsFactors=FALSE)
+    # Add hitters to players.hitters
+    # Add pitchers to players.pitchers
+  }
+}
+```
+Thus, we had a data frame of all the pitchers and hitters in the MLB from 2010-2015. As we can see, getting the data from the website was not the issue because the urls were consistent, and all we wanted was the names of the players. It was a bit more effort and data wrangling to get the statistics for each individual player.
+Although the urls were consistent for each player, they only used the first five letters of their last name and the first two letters of their first name. Unfortunately, @stats is a database for retired players, and multiple players both currently playing and retired have the same first five letters of their last name and the first two letters of their first name. We were able to work around this issue by checking if both the full name of the player and the years for which we wanted data were in the output from the getURL call.
+
 The data collection for this project was the most involved component.
 We were able to find comprehensive statistics for any given player from @stats, however each page was for one player.
 So we had to go find a list of all players for a given year.
