@@ -8,6 +8,9 @@ bibliography: report.bib
 nocite: |
   @ggplot2, @shiny, @dplyr, @RCurl, @jsonlite, @shinydashboard, @RgoogleMaps, @xml, @tidyr, @mosaic, @stringr, @R
 ---
+```{r, include=FALSE}
+require(dplyr)
+```
 
 [//]: # Introduction Section-------------------------------------------------
 # Introduction
@@ -18,6 +21,15 @@ What factors play a role in who gets traded? Obviously, there are some player-ex
 # Data Collection
 Unfortunately, the official MLB webpages and related fan pages were not created for data scientists. So step one was scraping the data from a number of pages and wrangling it into a usable format. To keep things reasonable, we decided to limit our search to records from the last six years only (2010-2015, inclusive). 
 We found that @stats had all of the information that we were looking for, such as individual statistics and yearly team rosters. Another appealing aspect of @stats was that the urls for the web pages were very consistent; the only differences in the urls were differences in years, team names, and player names. Thus, we could write a script that could scrape all the data that we needed without any actions by us, which was appealing and could allow future users to scrape data for years different than 2010-2015.
+
+We won't actually run the code to colelct the data here, because it will takes a lot of time.
+We have all the data saved, so we'll just load them in here.
+Note that you should set the working directory to the location of this file, assuming no changes have been made to the file structure.
+```{r, message=FALSE}
+load("../Data/teams.RData")
+load("../Data/trades.RData")
+load("../Data/player_stats_selected.RData")
+```
 
 ## List of all players
 Because of the setup of @stats, it made the most sense for us to get a list of all the players that played in the MLB from 2010-2015 and then get all of their statistics for that time period. In order to get this data frame of players, we looped over the years and the team names as shown below. Refer to `get_player_names.R` for the full code.
@@ -53,12 +65,6 @@ All transactions for a given month for a given year could be found through @trad
 However, instances exist of teams changing names, while some entries from @trades include minor league teams, so we also needed a list of all the major league baseball teams and their naming history.
 In this section, we will discuss some of the subtleties that made this a difficult process.
 
-To keep our project organized, we split up the data collection into their own files. We run all the data collection here and we will have code bits to describe some of the steps. Refer to the `final_project.R` file and all the other supplemental files.
-```{r, message=FALSE, eval=FALSE}
-setwd("~/Documents/GitHub/MATH154_FinalProject")
-source("final_project.R", local=TRUE, echo=FALSE)
-```
-
 ### Teams
 Although list of team names were acquired manually, there are only 30 teams so it was very manageable.
 We also got data on the location of every team.
@@ -68,7 +74,7 @@ Lastly, we also wanted latitude and longitude locations for each team, which we 
 For each of the city locations, we look up the lat lon data with an API call to Google Maps.
 
 The data looks like
-```{r, eval=FALSE}
+```{r}
 head(teams, n = 3)
 ```
 
@@ -109,7 +115,7 @@ tempData <- tempData %>%
 ```
 
 We did these steps for all 12 months during 2010 to 2015, which ultimately gave us the following table.
-```{r, eval=FALSE}
+```{r}
 head(trades, n = 3)
 ```
 
@@ -119,7 +125,7 @@ We used logisic regression to predict whether or not a player would get traded o
 We chose logistic regression because the output is like a probability of being traded and so we could have an idea of how confident we can be of the prediction.
 
 We first create the response variable by cross referencing the trade data with the statistics.
-```{r, eval=FALSE}
+```{r}
 #-------------------------BATTERS-------------------------
 
 # wrangle/mutate batter data 
@@ -137,7 +143,7 @@ players.hitters.stats = select(players.hitters.stats, Age, BA, OBP, `R/PA`, `RBI
                                `2B/PA`, `3B/PA`, `HR/PA`, `SB/PA`, `SO/PA`, traded)
 ```
 We repeat this same process for the pitching data
-```{r, eval=FALSE}
+```{r}
 #--------------------------PITCHERS--------------------------
 
 #wrangle and mutate pitcher data
@@ -159,7 +165,7 @@ players.pitchers.stats = select(players.pitchers.stats, Age, `W-L%`, ERA, FIP, W
 Then we can build the classifier on this data. 
 In R we can use the function `glm` and specify the family to binomial to do logistic regression.
 
-```{r, eval=FALSE}
+```{r}
 #logistic regression for batters
 glm.fit.bat = glm(traded~., data = players.hitters.stats, family=binomial)
 
@@ -169,14 +175,14 @@ glm.fit.pitch = glm(traded~., data = players.pitchers.stats, family=binomial)
 
 Once we have these fits, we need to come up with a cutoff for which data points are considered a 1 and which ones are 0s.
 To do this, we used 10-fold cross validation!
-```{r, eval=FALSE}
+```{r, cache.vars=TRUE}
 # Cross validation function
+cutoff_errors = c()
 crossValid <- function(d) {
   d = sample(d)
   k = 10
   step = floor(nrow(d)/10)-1
-  cutoff_errors = c()
-  
+
   for (c in (1:100)/100) {
     errors = c()
     s_index = 1
@@ -206,24 +212,24 @@ crossValid <- function(d) {
 }
 ```
 Keeping track of the average error for various cutoffs, we found that around 0.4 gave us the best results for hitters.
-```{r, eval=FALSE}
+```{r}
 crossValid(players.hitters.stats)
 ```
 The pitchers however, gave us interesting results.
 The cutoff that gives us the lowest average error is anything at or above 0.92.
-```{r, eval=FALSE}
+```{r}
 crossValid(players.pitchers.stats)
 ```
 This cutoff actually resultd in a prediction of 0 every single time, this effectively tells us that these variables don't tell us much but how likely it is for a pitcher to be traded.
 However, so that we can have a more interesting predictor, we'll use the next best cutoff.
-```{r, eval=FALSE}
+```{r}
 x = cutoff_errors[1:91]
 which(x == min(x))/100
 ```
 We find that this is also around 0.4.
 
 Now that we have a model, we can look into what variables seem to contribute more to determining wether or not a player gets traded.
-```{r,eval=FALSE}
+```{r}
 glm.fit.bat
 
 glm.fit.pitch

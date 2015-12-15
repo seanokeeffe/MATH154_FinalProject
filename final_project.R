@@ -8,6 +8,9 @@
 #    Contributors: Jozi McKiernan
 #                  Sean O'Keeffe
 #                  Sam Woodman
+#
+# Note: This file will take a very long time to run, it pulls from many urls
+# and there's significant data processing.
 #------------------------------------------------------------------------------------
 
 # Required packages
@@ -36,7 +39,7 @@ source('get_trade_data.R', local=TRUE, echo=FALSE)
 # Get the names of all players in the MLB between 2010 and 2015.
 # players.hitters is data frame of hitter first names, last names, position, and hitting style
 # players.pitchers is data frame of pitcher first names, last names, position ("P"), and pitching hand
-source('Google Drive/Semester 7/MATH154-Comp Stats/MATH154_FinalProject_Git/get_player_names.R', local=TRUE, echo=FALSE)
+source('get_player_names.R', local=TRUE, echo=FALSE)
 
 # Functions used to get the stats of all players in the MLB between 2010 and 2015
 source('get_player_stats.R', local=TRUE, echo=FALSE)
@@ -68,3 +71,6 @@ players.pitchers.stats <- players.pitchers.stats %>%
   mutate(`SHO/G` = SHO/G) %>% 
   mutate(`SV/G` = SV/G) %>% 
   select(player, Year, Age, `W-L%`, ERA, `SHO/G`, `SV/G`, FIP, WHIP, `H9`, `HR9`, `BB9`, `SO9`)
+
+# Apply logistic regression
+source('logistic_regression.R')
