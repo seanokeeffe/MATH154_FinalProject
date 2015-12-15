@@ -59,16 +59,12 @@ setwd("~/Documents/GitHub/MATH154_FinalProject")
 source("final_project.R", local=TRUE, echo=FALSE)
 ```
 
-
-
-
-## Teams
-The list of team names were acquired manually, there are only 30 teams so it was very manageable.
+### Teams
+Although list of team names were acquired manually, there are only 30 teams so it was very manageable.
 We also got data on the location of every team.
 Although a location is given in the team name, situations like the *Florida Marlins* is not an easy thing to locate on a map.
-These locations were also acquired manually, and the team colors were also recorded manually.
-Lastly, we also wanted latitude and longitude locations for each team.
-This data came from google maps, using a package in R called `Rgooglemaps` from @RgoogleMaps.
+Thus, these locations were also acquired manually, and the team colors were recorded manually.
+Lastly, we also wanted latitude and longitude locations for each team, which we obtained from google maps using a package in R called `Rgooglemaps` from @RgoogleMaps.
 For each of the city locations, we look up the lat lon data with an API call to Google Maps.
 
 The data looks like
@@ -76,12 +72,12 @@ The data looks like
 head(teams, n = 3)
 ```
 
-## Trades
-The trade data was a unique problem that we hadn't seen before.
-When you try to scrape the HTML code for this website as we have done previously, no tables appear.
-It turns out that the tables are generated on the client side through Java script so scraping the initial request doesn't give you anything. 
-However the data itself had to be sent at some point, so after digging through some of the other files transfered, we found a JSON file that seemed to contain all the data we wanted.
-So we query the URL for this file rather than the website.
+### Trade data
+Getting the trade data was a problem that we hadn't seen before.
+When we tried to scrape the HTML code for this website as we had done previously in this project and in class, no tables appear.
+After a decent bit of research, we discovered that the tables are generated on the client side through Java script, which was why scraping the initial request didn't give us anything. 
+However, the data itself had to be sent at some point, so after digging through some of the other files transfered, we found a JSON file that seemed to contain all the data we wanted.
+Thus, we queried the URL for this file rather than the website as follows.
 ```{r, eval=FALSE}
 # This website loads the table data using Javascript. We go directly to the 
 # JSON file which provides the data.
@@ -94,7 +90,7 @@ url <- paste('http://mlb.mlb.com/lookup/json/named.transaction_all.bam?start_dat
 json <- getURL(url)
 tempData <- as.data.frame(fromJSON(json))
 ```
-From here we trim down the data so that we only keep the data we're interested in.
+Next, we trim down the data so that we only keep the data we're interested in.
 ```{r, eval=FALSE}
 # Filter all the things we don't want. 
 tempData <- tempData %>%
@@ -112,8 +108,7 @@ tempData <- tempData %>%
   mutate(MatchKey = paste(transaction_all.queryResults.row.player, Year)) 
 ```
 
-We do these steps for all 12 months during 2010 to 2015.
-This ultimately gives us a table that is shown below, see .
+We did these steps for all 12 months during 2010 to 2015, which ultimately gave us the following table.
 ```{r, eval=FALSE}
 head(trades, n = 3)
 ```
@@ -147,7 +142,7 @@ Then the app will magically run that point through our classifier and predict we
 
 ## Trades Map
 
-This is a graphic that lets you visualize the trades.
+This graphic lets you visualize the trades.
 As you can see in Figure~\ref{fig:trades_map}, you can select any number of teams you want and on the map will be all the trades that happened during 2010 to 2015 to that team.
 
 Below that is a data dump of those trades.
