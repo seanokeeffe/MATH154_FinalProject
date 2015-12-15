@@ -50,7 +50,7 @@ players.hitters.urls <- unname(apply(players.hitters, 1, get.player.urls))
 players.pitchers.urls <- unname(apply(players.pitchers, 1, get.player.urls))
 
 # Get player stats
-players.hitters.stats1 <- get.player.stats(players.hitters.urls, players.hitters, 2010:2015)
+players.hitters.stats <- get.player.stats(players.hitters.urls, players.hitters, 2010:2015)
 players.pitchers.stats <- get.player.stats(players.pitchers.urls, players.pitchers, 2010:2015)
 
 # Filter hitter stats for desired stats
