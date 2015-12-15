@@ -52,3 +52,20 @@ players.hitters.urls <- apply(players.hitters, 1, get.player.urls)
 # Get player stats
 players.stats.pitcher <- get.player.stats(players.pitchers.urls[1:500], players.pitchers[1:500,], 2010:2015)
 players.stats.hitter <- get.player.stats(players.hitters.urls, players.hitters, 2010:2015)
+
+# Filter pitcher stats for desired stats
+players.stats.pitcher.test <- players.stats.pitcher1 %>% 
+  mutate(`SHO/G` = R/PA) %>% 
+  mutate(`SV/G` = `2B`/PA) %>% 
+  select(Age, `W-L%`, ERA, `SHO/G`, `SV/G`, FIP, WHIP, `H9`, `HR9`, `BB9`, `SO9`)
+
+# Filter hitter stats for desired stats
+players.stats.hitter <- players.stats.hitter %>% 
+  mutate(`R/PA` = R/PA) %>% 
+  mutate(`2B/PA` = `2B`/PA) %>% 
+  mutate(`3B/PA` = `3B`/PA) %>% 
+  mutate(`HR/PA` = HR/PA) %>% 
+  mutate(`RBI/PA` = RBI/PA) %>% 
+  mutate(`SB/PA` = SB/PA) %>% 
+  mutate(`SO/PA` = SO/PA) %>% 
+  select(Age, BA, OBP, `R/PA`, `2B/PA`, `3B/PA`, `HR/PA`, `RBI/PA`, `SB/PA`, `SO/PA`)
