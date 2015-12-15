@@ -11,35 +11,52 @@
 
 # Packages are loaded in final_project.R
 
-# Get first and last name from noisy string
-format.names <- function(vec) {
-  name.first <- unlist(str_split(vec, "\r"))[1]
-  name.last <- tail(unlist(str_split(vec, "\t")), n=1)
-  
-  c(name.first, name.last)
+baseball.teams <- c("ARI", "ATL", "BAL", "BOS", "CHC", "CHW", "CIN", "CLE", "COL", "DET", 
+                    "FLA", "HOU", "KCR", "LAA", "LAD", "MIL", "MIN", "NYM", "NYY", "OAK", 
+                    "PHI", "PIT", "SDP", "SFG", "SEA", "STL", "TBR", "TEX", "TOR", "WSN")
+players.hitters <- players.pitchers <- data.frame()
+
+for(year in 2010:2015) {
+  # Update team codes if necessary-see Baseball Team Abbreviations.txt
+  if(year == 2012) baseball.teams[11] <- "MIA"
+  for(team in baseball.teams) {
+    cat("year:", year, "; team:", team, "\n")
+    # Get team roster
+    # Ex: 2010 Dodgers: web.team <- getURL("http://www.baseball-reference.com/teams/LAD/2010.shtml")
+    url.string <- paste("http://www.baseball-reference.com/teams/", team, "/", year, ".shtml", sep = "")
+    web.team <- getURL(url.string)
+    parsedDoc.team <- readHTMLTable(web.team, stringsAsFactors=FALSE)
+    
+    # Hitters
+    team.hitter <- parsedDoc.team$team_batting %>% filter(Rk != "Rk", !(Pos %in% c("P", "")))
+    team.hitter$Hand <- unname(sapply(team.hitter$Name, function(x) ifelse(grepl("\\*", x), "L", 
+                                                                           ifelse(grepl("#", x), "S", "R"))))
+    team.hitter$Name <- unname(sapply(team.hitter$Name, function(y) gsub("\\*|#|?", "", y)))
+    name.hitter <- unname(sapply(team.hitter$Name, function(z) unlist(regmatches(z, regexpr(" ", z), 
+                                                                                 invert = TRUE))))
+    
+    team.hitter.to.add <- data.frame(name.first = name.hitter[1,], 
+                                     name.last = name.hitter[2,], 
+                                     hand = team.hitter$Hand,
+                                     pos = team.hitter$Pos, 
+                                     stringsAsFactors = FALSE)
+    players.hitters <- unique(rbind(players.hitters, team.hitter.to.add))
+    
+    # Pitchers
+    team.pitcher <- parsedDoc.team$team_pitching %>% filter(Rk != "Rk")
+    team.pitcher$Hand <- unname(sapply(team.pitcher$Name, function(a) ifelse(grepl("\\*", a), "L", 
+                                                                             ifelse(grepl("#", a), "S", "R"))))
+    team.pitcher$Name <- unname(sapply(team.pitcher$Name, function(b) gsub("\\*|#|?", "", b)))
+    name.pitcher <- unname(sapply(team.pitcher$Name, function(z) unlist(regmatches(z, regexpr(" ", z), 
+                                                                                   invert = TRUE))))
+    
+    team.pitcher.to.add <- data.frame(name.first = name.pitcher[1,], 
+                                      name.last = name.pitcher[2,], 
+                                      hand = team.pitcher$Hand,
+                                      pos = "P",
+                                      stringsAsFactors = FALSE)
+    players.pitchers <- unique(rbind(players.pitchers, team.pitcher.to.add))
+  }
 }
 
-# Get the names of all of the players in the mlb for a certain series of years
-get.player.names <- function(years.all = 2010:2015) {
-  players.all <- data.frame()
-  for(year in years.all){
-    cat("Year", year, "\n")
-    num <- 1
-    while(TRUE) {
-      cat("Year", year,"; Num", num, "\n")
-      url.string <- paste("http://www.foxsports.com/mlb/players?season=", year, "&page=", num, "&position=0", sep = "")
-      web <- getURL(url.string)
-      parsedDoc <- readHTMLTable(web, stringsAsFactors=FALSE)
-      if(length(parsedDoc) == 0) break
-      
-      data.table <- parsedDoc[[1]]
-      temp <- unname(sapply(data.table$Player, format.names))
-      players.to.add <- data.frame(first.name = temp[1,], last.name = temp[2,], 
-                                   pos = data.table$Position, stringsAsFactors = FALSE)
-      
-      players.all <- unique(rbind(players.all, players.to.add))
-      num <- num + 1
-    }
-  }
-  players.all
-}
+rm(list=setdiff(ls(), c("players.pitchers", "players.hitters")))

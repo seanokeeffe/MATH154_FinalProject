@@ -44,7 +44,7 @@ Although a location is given in the team name, situations like the *Florida Marl
 These locations were also acquired manually.
 Team colors were also recorded manually.
 Lastly, we also wanted latitude and longitude locations for each team.
-This data came from google maps, using a package in R called `Rgooglemaps` @RgoogleMaps.
+This data came from google maps, using a package in R called `Rgooglemaps` from @RgoogleMaps.
 For each of the city locations, we look up the lat lon data with an API call to Google Maps.
 
 The data looks like
@@ -113,17 +113,19 @@ SHO, CG, L,R,  W,  GF, ERA, SV, ER, HBP, BK, SO9
 
 [//]: # Shiny Web App Section------------------------------------------------
 # Shiny Web App
-The Shiny Web App has 3 tabs, Predict Trades, Trades Map, and Something.
+The Shiny Web App has 3 tabs, Predict Trades, Trades Map, and a Single Variable Trend.
 Each one of these tabs will be described below.
 
 ## Predict Trades
 We built a classifier using statistics of the baseball players to try and predict wether or not a player would get traded.
-So in this tab you are able to input all the statistics that were used to build the classifier.
-Then it will output a prediction of yes they will be traded or no they won't be.
+In this tab you can input statistics on any hitter or batter.
+Then the app will magically run that point through our classifier and predict wether or not that player would get traded given those statistics.
 
 ## Trades Map
+
 This is a graphic that lets you visualize the trades.
 As you can see in Figure~\ref{fig:trades_map}, you can select any number of teams you want and on the map will be all the trades that happened during 2010 to 2015 to that team.
+
 Below that is a data dump of those trades.
 This doesn't tell us anything particularly useful about the data, it was just a fun visualization.
 
@@ -134,8 +136,10 @@ This doesn't tell us anything particularly useful about the data, it was just a 
 \caption{Screenshot of Trades Map tab.}
 \end{figure}
 
-
-## Something
-Maybe one variable dependence..?
+## Single Variable Trend
+This tab allows you to select one of the predictor variables for batters or pitchers and see it's effects on a player getting traded.
+The output is a plot that shows for which values of the selected variable, the players in our data got traded.
+Using this, you can get a better understanding of which variables might be important and which ones are irrelevant.
+If there was a strong connection between any single variable and a players likelihood to be traded, it would be present in these graphs.
 
 \newpage
