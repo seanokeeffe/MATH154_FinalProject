@@ -39,7 +39,7 @@ get.webpage.data <- function(player.url, player.name, years) {
     # Else increment url index
     idx <- idx + 1
     if(idx >= 5) {
-      cat("Index of player url is greater than 10", "\n")
+      cat("Index of player url is greater than 5", "\n")
       player.web <- ""
       break
     }
