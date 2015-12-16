@@ -15,21 +15,12 @@ require(dplyr)
 require(ggmap)
 
 # load in data on trades and teams
-load("Data/trades.RData")
-load("Data/teams.RData")
+load("~/allData.RData")
+load("~/trades.RData")
+load("~/player_stats_selected.RData")
 
-# Add to trades data, the location and color of each team
-all_data <- trades
-for (i in 1:nrow(all_data)) {
-  newTeam <- teams %>% filter(Team.Names == as.character(all_data$NewTeam[i]))
-  oldTeam <- teams %>% filter(Team.Names == as.character(all_data$OldTeam[i]))
-  all_data$lat_n[i] <- newTeam$lat
-  all_data$lon_n[i] <- newTeam$lon
-  all_data$lat_o[i] <- oldTeam$lat
-  all_data$lon_o[i] <- oldTeam$lon
-  all_data$color[i] <- as.character(newTeam$Color)
-}
-remove(newTeam, oldTeam, i)
+# Train our predictor
+source("~/logistic_regression.R", local=TRUE, echo=FALSE)
 
 # Base map layer of the US
 usa <- get_map(location='USA', zoom=4)
@@ -37,6 +28,27 @@ usa <- get_map(location='USA', zoom=4)
 server <- function(input, output) {
   
   # Reactive Functions------------------------------------------------------------------
+  predictBatter <- reactive({ function() {
+    new_batter <- data.frame(input$age, input$ba, input$obp, input$rppa, input$`2bppa`, input$`3bppa`, input$hrppa, input$rbippa, input$sbppa, input$soppa)
+    colnames(new_batter) <- c('Age', 'BA', 'OBP', 'R/PA', '2B/PA', '3B/PA', 'HR/PA', 'RBI/PA', 'SB/PA', 'SO/PA')
+    print(new_batter)
+    if (predict(glm.fit.bat, newdata = new_batter, type = "response")>.4) {
+      "YES"
+    } else {
+      "NO"
+    }
+  }})
+  
+  predictPitcher <- reactive({ function() {
+    new_pitcher <- data.frame(input$age_p, input$wl, input$era, input$shpg, input$svpg, input$fip, input$whip, input$`hr9`, input$`s9`)
+    colnames(new_pitcher) <- c('Age', 'W-L%', 'ERA', 'SHO/G', 'SV/G', 'FIP', 'WHIP', 'HR9', 'SO9')
+    if (predict(glm.fit.pitch, newdata = new_pitcher, type = "response")>.5) {
+      "YES"
+    } else {
+      "NO"
+    }
+  }})
+  
   plotMap <- reactive({ function() {
     tradeMap <- ggmap(usa)
     # For each team that is selected, add a line segment for all the trades
@@ -48,7 +60,25 @@ server <- function(input, output) {
     remove(temp, temp_color, team)
     tradeMap
   }})
+  
+  getBatterVarPlot <- reactive({ function() {
+    temp_df <- data.frame(traded = players.hitters.stats$traded, stat = players.hitters.stats[[input$var_b]])
+    ggplot(data = temp_df) + geom_jitter(aes(x=stat, y=traded, color=traded))
+  }})
+  
+  getPitcherVarPlot <- reactive({ function() {
+    temp_df <- data.frame(traded = players.pitchers.stats$traded, stat = players.pitchers.stats[[input$var_p]])
+    ggplot(data = temp_df) + geom_jitter(aes(x=stat, y=traded, color=traded))
+  }})
   #-------------------------------------------------------------------------------------
+  
+  output$pred_b <- renderText({
+    predictBatter()()
+  })
+  
+  output$pred_p <- renderText({
+    predictPitcher()()
+  })
   
   # Output for mapping the trades
   output$map <- renderPlot({
@@ -57,6 +87,17 @@ server <- function(input, output) {
   
   # Output of the data that makes the map
   output$table <- renderDataTable(
-    trades %>% filter(NewTeam %in% input$team) %>% select(-MatchKey)
+    all_data %>% select(-c(MatchKey, lat_n, lon_n, lat_o, lon_o, color)) %>%
+      filter(NewTeam %in% input$team)
   )
+  
+  # Output of the batter variable vs traded plot
+  output$plot_b <- renderPlot({
+    getBatterVarPlot()()
+  })
+  
+  # Output of the pitcher variable vs traded plot
+  output$plot_p <- renderPlot({
+    getPitcherVarPlot()()
+  })
 }

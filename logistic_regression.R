@@ -98,5 +98,5 @@ players.pitchers.stats = select(players.pitchers.stats, Age, `W-L%`, ERA, FIP, W
 glm.fit.pitch = glm(traded~., data =players.pitchers.stats, family=binomial)
 
 #print confusion matrix
-table(predict(glm.fit.pitch, type = "response")>.5, players.pitchers.stats$traded)
+table(predict(glm.fit.pitch, type = "response")>.4, players.pitchers.stats$traded)
 
