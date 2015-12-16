@@ -1,5 +1,5 @@
 ---
-title: "Something Interesting Baseball"
+title: "Who's on the Trading Block?"
 author: "Jozi McKiernan, Sean O'Keeffe & Sam Woodman"
 output: pdf_document
 header-includes:
